@@ -9,12 +9,18 @@ class Document(models.Model):
     name = models.CharField(_('Name'), max_length=200)
     account = models.ForeignKey('Account', on_delete=models.CASCADE)
     document_link = models.URLField(_('Document Link'), null=True, blank=True)
-    STATUS_CHOICES = [
-        ('Pending', 'Pending'), 
-        ('Approved', 'Approved'), 
-        ('Rejected', 'Rejected')
-    ]
-    status = models.CharField(_('Status'), choices=STATUS_CHOICES, max_length=20, default='Pending')
+
+    class Status(models.TextChoices):
+        PENDING = 'pending', _('Pending')
+        APPROVED = 'approved', _('Approved')
+        REJECTED = 'rejected', _('Rejected')
+
+    status = models.CharField(
+        _('Status'), 
+        max_length=20,
+        choices=Status.choices,
+        default=Status.PENDING
+    )
     checked_by = models.ForeignKey('Account', on_delete=models.CASCADE)
 
     def __str__(self):

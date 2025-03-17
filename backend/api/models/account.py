@@ -10,7 +10,18 @@ class Account(AbstractUser):
     
     username = None
     email = models.EmailField(_('Email Address'), unique=True)
-    is_intern = models.BooleanField(_('Is Intern?'), default=False)
+
+    class Role(models.TextChoices):
+        ADMIN = 'admin', _('Admin')
+        EMPLOYEE = 'employee', _('Employee')
+        INTERN = 'intern', _('Intern')
+
+    role = models.CharField(
+        _('Role'),
+        max_length=20,
+        choices=Role.choices,
+        default=Role.EMPLOYEE
+    )
 
     USERNAME_FIELD = 'email'
     REQUIRED_FIELDS = []
@@ -19,4 +30,16 @@ class Account(AbstractUser):
 
     def __str__(self):
         return self.email
+    
+    @property
+    def is_admin(self):
+        return self.role == self.Role.ADMIN
+
+    @property
+    def is_employee(self):
+        return self.role == self.Role.EMPLOYEE
+
+    @property
+    def is_intern(self):
+        return self.role == self.Role.INTERN
     
