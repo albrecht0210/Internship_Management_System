@@ -3,6 +3,7 @@ import { FC } from "react";
 import Footer from "../../components/Footer";
 import LoginCard from "./components/LoginCard";
 import Grid from '@mui/material/Grid2';
+
 const loginPageStyle: SxProps<Theme> = {
     display: 'flex',
     flexDirection: 'column',
