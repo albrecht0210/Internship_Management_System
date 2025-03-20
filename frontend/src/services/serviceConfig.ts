@@ -13,7 +13,7 @@ export const api = axios.create({
  * Interceptor function to modify outgoing requests before they are sent.
  */
 api.interceptors.request.use(
-    (requestConfig: AxiosRequestConfig): AxiosRequestConfig<any> => {
+    (requestConfig) => {
         if (requestConfig.baseURL !== apiConfig.API_URL) {
             return requestConfig;
         }
@@ -35,7 +35,7 @@ api.interceptors.request.use(
  * Handles token expiration errors (HTTP status code 401) and refreshes the access token.
  */
 api.interceptors.response.use(
-    (response: AxiosResponse) => response,
+    (response) => response,
     async (error) => {
         const originalRequest = error?.config as AxiosRequestConfig & { sent?: boolean };
         if (error?.response?.status === 401 && !originalRequest?.sent) {
@@ -51,16 +51,16 @@ api.interceptors.response.use(
                 const { data: newToken } = await TokenService.refresh({ refresh: refreshToken });
 
                 if (originalRequest.headers) {
-                    originalRequest.headers.Authorization = `Bearer ${newToken?.access}`;
+
+                    originalRequest.headers.Authorization = `Bearer ${newToken.access}`;
                 }
 
-                Cookies.set("accessToken", hash(newToken?.access, tokenId));
+                Cookies.set("accessToken", hash(newToken.access, tokenId) ?? "");
 
                 return api(originalRequest);
             } catch (err) {
                 Cookies.remove("accessToken");
                 Cookies.remove("refreshToken");
-                localStorage.removeItem("tokenId");
                 redirect("/");
                 throw err;
             }

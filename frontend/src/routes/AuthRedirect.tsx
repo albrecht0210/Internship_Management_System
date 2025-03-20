@@ -1,17 +1,15 @@
 import { FC } from "react";
-import { Navigate, Outlet } from "react-router-dom";
+import { Navigate } from "react-router-dom";
 import { useAuthContext } from "../context/AuthContext";
 
-const PrivateRoute: FC = ({ }) => {
+const AuthRedirect: FC = () => {
     const { accessToken } = useAuthContext();
 
     if (!accessToken) {
         return <Navigate to="/login" replace />
     }
 
-    if () {
-        return <Navigate to="/unauthorize" replace />
-    }
-
-    return <Outlet />
+    return <Navigate to="/ollopa" replace />
 }
+
+export default AuthRedirect;
