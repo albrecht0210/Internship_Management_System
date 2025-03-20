@@ -1,15 +1,18 @@
 import { SnackbarProvider } from "notistack";
 import { CssBaseline } from "@mui/material";
-import { ApplicationProvider } from "./providers/ApplicationProvider";
-import UrlRouter from "./routes";
+import { ApplicationProvider } from "./context/ApplicationContext";
+import { AuthProvider } from "./context/AuthContext";
+import AppRouter from "./routes";
 
 function App() {
   return (
     <ApplicationProvider>
-      <SnackbarProvider maxSnack={3}>
-        <CssBaseline />
-        <UrlRouter />
-      </SnackbarProvider>
+      <AuthProvider>
+        <SnackbarProvider maxSnack={3}>
+          <CssBaseline />
+          <AppRouter />
+        </SnackbarProvider>
+      </AuthProvider>
     </ApplicationProvider>
   );
 }

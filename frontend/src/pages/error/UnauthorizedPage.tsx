@@ -3,9 +3,9 @@ import { CSSProperties, FC } from "react";
 import { useNavigate } from "react-router-dom";
 
 /**
- * Styles for the error page component, defining its layout and visual appearance.
+ * Styles for the unauthorized page component, defining its layout and visual appearance.
  */
-const errorPageStyle: SxProps<Theme> = {
+const unauthorizePageStyle: SxProps<Theme> = {
     height: '100vh',
     display: 'flex',
     justifyContent: 'center',
@@ -15,17 +15,17 @@ const errorPageStyle: SxProps<Theme> = {
 /**
  * Styles for the image component, defining its size and max width.
  */
-const image404Style: CSSProperties = {
+const image401Style: CSSProperties = {
     width: '100%',
     maxWidth: '500px'
 }
 
 /**
- * ErrorPage component, responsible for displaying a 404 error page with navigation options.
+ * UnauthorizedPage component, responsible for displaying a 404 error page with navigation options.
  *
  * This component renders the error page content.
  */
-const ErrorPage: FC = () => {
+const UnauthorizedPage: FC = () => {
     const navigate = useNavigate();
 
     /**
@@ -38,10 +38,10 @@ const ErrorPage: FC = () => {
     }
 
     return (
-        <Box sx={errorPageStyle}>
+        <Box sx={unauthorizePageStyle}>
             <Stack spacing={2} alignItems="center">
-                <img src="404.png" style={image404Style} alt="404" />
-                <Typography variant="h4" fontWeight={100}>Sorry, page not found</Typography>
+                <img src="404.png" style={image401Style} alt="404" />
+                <Typography variant="h4" fontWeight={100}>You are not authorized to access this page</Typography>
                 <Button
                     variant="contained"
                     onClick={() => handleReturn("/dashboard")}
@@ -53,4 +53,4 @@ const ErrorPage: FC = () => {
     );
 }
 
-export default ErrorPage;
+export default UnauthorizedPage;

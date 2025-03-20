@@ -1,7 +1,8 @@
-import { ILoginFormData, IValidationLoginError } from "../@types/login";
+import { ICredentials } from "../@types/form";
+import { ICredentialsValidation } from "../@types/validation.form";
 
-export const validateLoginForm = (formData: ILoginFormData): IValidationLoginError => {
-    const errors: IValidationLoginError = {
+export const validateLoginForm = (formData: ICredentials): ICredentialsValidation => {
+    const errors: ICredentialsValidation = {
         email: false,
         password: false
     };

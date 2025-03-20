@@ -1,35 +1,47 @@
 import axios, { AxiosResponse } from "axios";
 import apiConfig from "./apiConfig";
-import { ICredentials, IRefreshCredential, ITokenCredential, ITokenResponse } from "../@types/service";
+import { IToken, ITokenPair, IAccessToken, IRefreshToken } from "../@types/token";
+import { ICredentials } from "../@types/form";
 
+// Base URL for token-related API endpoints
 const LOCAL_BASE_URL = `${apiConfig.API_URL}/token`;
 
+// Create an Axios instance to use for API calls
 const localInstance = axios.create();
 
 const TokenService = {
     /**
-     * Generates a token using the provided user credentials.
-     *
-     * @param {ICredentials} credentials - User credentials.
-     * @returns {Promise<ITokenResponse>} A Promise that resolves with the generated token.
+     * Generates an authentication token using the provided user credentials.
+     * 
+     * This endpoint is typically used during login to authenticate a user and 
+     * retrieve both an access and a refresh token.
+     * 
+     * @param {ICredentials} credentials - The user's credentials (email and password).
+     * @returns {Promise<AxiosResponse<ITokenPair>>} A Promise that resolves with a response containing both the access and refresh tokens.
      */
-    token: (credentials: ICredentials): Promise<AxiosResponse<ITokenResponse>> => localInstance.post(`${LOCAL_BASE_URL}/`, credentials),
+    token: (credentials: ICredentials): Promise<AxiosResponse<ITokenPair>> => localInstance.post(`${LOCAL_BASE_URL}/`, credentials),
 
     /**
-     * Verifies the authenticity of a token.
-     *
-     * @param {ITokenResponse} credential - Authentication token to verify.
-     * @returns {Promise<any>} A Promise that resolves if the token is valid.
+     * Verifies the authenticity of an authentication token.
+     * 
+     * This endpoint is used to check if a given token is still valid, often used for 
+     * session management to ensure the user's session is active.
+     * 
+     * @param {IToken} credential - The token to verify, either access or refresh token.
+     * @returns {Promise<AxiosResponse<void>>} A Promise that resolves with no content if the token is valid.
      */
-    verify: (credential: ITokenCredential): Promise<AxiosResponse<any>> => localInstance.post(`${LOCAL_BASE_URL}/verify/`, credential),
+    verify: (credential: IToken): Promise<AxiosResponse<void>> => localInstance.post(`${LOCAL_BASE_URL}/verify/`, credential),
 
     /**
      * Refreshes an authentication token using a refresh token.
-     *
-     * @param {IRefreshCredential} credential - Refresh token used to obtain a new authentication token.
-     * @returns {Promise} A Promise that resolves with the new authentication token.
+     * 
+     * This endpoint is used to obtain a new access token when the original access token has expired,
+     * using the refresh token that was originally provided.
+     * 
+     * @param {IRefreshToken} credential - The refresh token used to obtain a new access token.
+     * @returns {Promise<AxiosResponse<IAccessToken>>} A Promise that resolves with the new access token.
      */
-    refresh: (credential: IRefreshCredential): Promise<AxiosResponse<ITokenResponse>> => localInstance.post(`${LOCAL_BASE_URL}/refresh/`, credential),
+    refresh: (credential: IRefreshToken): Promise<AxiosResponse<IAccessToken>> => localInstance.post(`${LOCAL_BASE_URL}/refresh/`, credential),
 };
 
 export default TokenService;

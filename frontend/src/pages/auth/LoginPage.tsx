@@ -4,18 +4,29 @@ import Footer from "../../components/Footer";
 import LoginCard from "./components/LoginCard";
 import Grid from '@mui/material/Grid2';
 
+/**
+ * Styles for the login page.
+ */
 const loginPageStyle: SxProps<Theme> = {
     display: 'flex',
     flexDirection: 'column',
     height: '100vh'
 }
 
+/**
+ * Styles for the main body of the login page.
+ */
 const bodyStyle: SxProps<Theme> = {
     justifyContent: 'center',
     alignItems: 'center',
     flex: 1
 }
 
+/**
+ * Login page component.
+ *
+ * This component renders the login form and layout.
+ */
 const LoginPage: FC = () => {
     return (
         <Box sx={loginPageStyle}>

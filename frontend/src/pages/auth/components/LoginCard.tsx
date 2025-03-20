@@ -1,33 +1,53 @@
 import { Button, IconButton, InputAdornment, Paper, Stack, SxProps, TextField, Theme, Typography } from "@mui/material";
-import { ChangeEvent, FC, FormEvent, useState } from "react";
-import { ILoginFormData, IValidationLoginError } from "../../../@types/login";
+import { ChangeEvent, FC, FormEvent, useEffect, useState } from "react";
 import { Visibility, VisibilityOff } from "@mui/icons-material";
 import { validateLoginForm } from "../../../utils/validation";
+import useToken from "../../../hooks/token/useToken";
+import { ICredentials } from "../../../@types/form";
+import { ICredentialsValidation } from "../../../@types/validation.form";
+import { DEFAULT_LOGIN_DATA, DEFAULT_LOGIN_VALIDATION, ERROR, SUCCESS } from "../../../utils/constant";
+import { useNavigate } from "react-router-dom";
 
+/**
+ * Styles for the login form.
+ */
 const formStyle: SxProps<Theme> = {
     p: 3,
 }
 
+/**
+ * Style for the submit button.
+ */
 const submitButtonStyle: SxProps<Theme> = {
     backgroundColor: '#292C52'
 }
 
-const defaultLoginData: ILoginFormData = {
-    email: '',
-    password: ''
-};
-
-const defaultLoginError: IValidationLoginError = {
-    email: false,
-    password: false
-}
-
+/**
+ * Login card component.
+ *
+ * This component renders the login form with validation and submission handling.
+ */
 const LoginCard: FC = () => {
-    const [formData, setFormData] = useState<ILoginFormData>(defaultLoginData);
-    const [errorFlag, setErrorFlag] = useState<IValidationLoginError>(defaultLoginError);
+    const { status, message, generateToken } = useToken();
+    const navigate = useNavigate();
+
+    const [formData, setFormData] = useState<ICredentials>(DEFAULT_LOGIN_DATA);
+    const [errorFlag, setErrorFlag] = useState<ICredentialsValidation>(DEFAULT_LOGIN_VALIDATION);
 
     const [showPassword, setShowPassword] = useState<boolean>(false);
 
+    useEffect(() => {
+        if (status === SUCCESS) {
+            navigate("/", { replace: true });
+        }
+        // eslint-disable-next-line
+    }, [status]);
+
+    /**
+     * Handles form change events by updating the form data and clearing error flags.
+     *
+     * @param {ChangeEvent<HTMLInputElement>} e The ChangeEvent of the HTML input element that triggered the event.
+     */
     const handleFormChange = (e: ChangeEvent<HTMLInputElement>): void => {
         const { id, value } = e.currentTarget;
         setFormData({
@@ -40,15 +60,23 @@ const LoginCard: FC = () => {
         });
     }
 
+    /**
+     * Toggles the password visibility when clicked.
+     */
     const handleClickShowPassword = () => setShowPassword((showPassword) => !showPassword);
 
+    /**
+     * Submits the form data and handles validation, token generation, and form reset.
+     *
+     * @param {FormEvent<HTMLFormElement>} e The FormEvent of the HTML form element that triggered the event.
+     * @returns A Promise that resolves when the form submission is complete.
+     */
     const handleSubmit = async (e: FormEvent<HTMLFormElement>): Promise<void> => {
         e.preventDefault();
 
-        const validationErrors: IValidationLoginError = validateLoginForm(formData);
+        const validationErrors: ICredentialsValidation = validateLoginForm(formData);
 
-        const validationKeys = Object.keys(validationErrors);
-        if (validationKeys.length !== 0) {
+        if (validationErrors.email || validationErrors.password) {
             setErrorFlag((previous) => ({
                 ...previous,
                 ...validationErrors,
@@ -60,7 +88,8 @@ const LoginCard: FC = () => {
             return;
         }
 
-        setFormData(defaultLoginData);
+        await generateToken(formData);
+        setFormData(DEFAULT_LOGIN_DATA);
     }
 
     return (
@@ -78,6 +107,7 @@ const LoginCard: FC = () => {
                 >
                     Login - Ollopa
                 </Typography>
+                {status === ERROR && <Typography color="error" variant="body1" textAlign="center">{message}</Typography>}
                 <TextField
                     id="email"
                     label="Email"
